@@ -10,7 +10,6 @@ from __future__ import division
 
 import json
 import os
-import pickle
 import sys
 import traceback
 
@@ -32,10 +31,10 @@ from ppocr.losses import build_loss
 from ppocr.optimizer import build_optimizer
 from ppocr.postprocess import build_post_process
 from ppocr.metrics import build_metric
-#from ppocr.utils.save_load import load_model
-from ppocr.utils.save_load import init_model
+from ppocr.utils.save_load import load_model
 import tools.program as program
-from tools.program import merge_config,load_config,check_gpu
+from tools.program import merge_config, load_config
+from tools.infer.utility import check_gpu
 from ppocr.utils.logging import get_logger
 
 # These are the paths to where SageMaker mounts interesting things in your container.
@@ -46,10 +45,11 @@ input_path = prefix + 'input/data'
 output_path = os.path.join(prefix, 'output')
 model_path = os.path.join(prefix, 'model')
 param_path = os.path.join(prefix, 'input/config/hyperparameters.json')
+config_path = 'opt/ml/input/data/config/ser_vi_layoutxlm_tickets.yml'
 
 # This algorithm has a single channel of input data called 'training'. Since we run in
 # File mode, the input files are copied to the directory specified here.
-channel_name='training'
+channel_name = 'tickets'
 training_path = os.path.join(input_path, channel_name)
 
 # The function to execute the training.
@@ -62,9 +62,6 @@ def load_train_config(config_path, is_train=False):
     check_gpu(use_gpu)
 
     alg = config['Architecture']['algorithm']
-    assert alg in [
-        'EAST', 'DB', 'SAST', 'Rosetta', 'CRNN', 'STARNet', 'RARE', 'SRN', 'CLS'
-    ]
 
     device = 'gpu:{}'.format(dist.ParallelEnv().dev_id) if use_gpu else 'cpu'
     device = paddle.set_device(device)
@@ -159,8 +156,8 @@ def train():
                 continue
 
         # Take the set of files and read them all into a single pandas dataframe
-        input_files = [ os.path.join(training_path, file) for file in os.listdir(training_path) ]
-        print ("<<<< input files: ", input_files)
+        input_files = [os.path.join(training_path, file) for file in os.listdir(training_path)]
+        print("<<<< input files: ", input_files)
         if len(input_files) == 0:
             raise ValueError(('There are no files in {}.\n' +
                               'This usually indicates that the channel ({}) was incorrectly specified,\n' +
@@ -168,7 +165,7 @@ def train():
                               'does not have permission to access the data.').format(training_path, channel_name))
 
         # todo: change the data directory
-        config, device, logger, vdl_writer = load_train_config('./rec_chinese_lite_train_v2.0_jackie.yml')
+        config, device, logger, vdl_writer = load_train_config(config_path)
         # init dist environment
         if config['Global']['distributed']:
             dist.init_parallel_env()
@@ -193,57 +190,7 @@ def train():
         post_process_class = build_post_process(config['PostProcess'],
                                                 global_config)
 
-        '''
         # build model
-        # for rec algorithm
-        if hasattr(post_process_class, 'character'):
-            char_num = len(getattr(post_process_class, 'character'))
-            config['Architecture']["Head"]['out_channels'] = char_num
-
-        model = build_model(config['Architecture'])
-        logger.info('train.py dataloader has {} iters, valid dataloader has {} iters'.
-                    format(len(train_dataloader), len(valid_dataloader)))
-        # build loss
-        loss_class = build_loss(config['Loss'])
-
-        # build optim
-        optimizer, lr_scheduler = build_optimizer(
-            config['Optimizer'],
-            epochs=config['Global']['epoch_num'],
-            step_each_epoch=len(train_dataloader),
-            parameters=model.parameters())
-
-        # build metric
-        eval_class = build_metric(config['Metric'])
-        # load pretrain model
-        pre_best_model_dict = load_model(config, model, optimizer)
-        logger.info('train dataloader has {} iters'.format(len(train_dataloader)))
-
-        if valid_dataloader is not None:
-            logger.info('valid dataloader has {} iters'.format(
-                len(valid_dataloader)))
-
-        use_amp = config["Global"].get("use_amp", False)
-        if use_amp:
-            AMP_RELATED_FLAGS_SETTING = {
-                'FLAGS_cudnn_batchnorm_spatial_persistent': 1,
-                'FLAGS_max_inplace_grad_add': 8,
-            }
-            paddle.fluid.set_flags(AMP_RELATED_FLAGS_SETTING)
-            scale_loss = config["Global"].get("scale_loss", 1.0)
-            use_dynamic_loss_scaling = config["Global"].get(
-                "use_dynamic_loss_scaling", False)
-            scaler = paddle.amp.GradScaler(
-                init_loss_scaling=scale_loss,
-                use_dynamic_loss_scaling=use_dynamic_loss_scaling)
-        else:
-            scaler = None
-
-        # start train.py
-        config['profiler_options'] = None
-    '''
-
-            # build model
         # for rec algorithm
         if hasattr(post_process_class, 'character'):
             char_num = len(getattr(post_process_class, 'character'))
@@ -260,12 +207,12 @@ def train():
             config['Optimizer'],
             epochs=config['Global']['epoch_num'],
             step_each_epoch=len(train_dataloader),
-            parameters=model.parameters())
+            model=model)
 
         # build metric
         eval_class = build_metric(config['Metric'])
         # load pretrain model
-        pre_best_model_dict = init_model(config, model, logger, optimizer)
+        pre_best_model_dict = load_model(config, model, optimizer)
 
         logger.info('train dataloader has {} iters'.format(len(train_dataloader)))
         if valid_dataloader is not None:
@@ -293,6 +240,7 @@ def train():
         print('Exception during training: ' + str(e) + '\n' + trc, file=sys.stderr)
         # A non-zero exit code causes the training job to be marked as Failed.
         sys.exit(255)
+
 
 if __name__ == '__main__':
     train()
