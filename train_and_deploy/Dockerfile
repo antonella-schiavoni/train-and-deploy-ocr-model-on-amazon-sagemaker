@@ -60,6 +60,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log
 RUN ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Set up the program in the image
-COPY paddle/* /opt/program/
+COPY train-and-deploy-ocr-model-on-amazon-sagemaker/train_and_deploy/paddle/* /opt/program/
 RUN chmod +x /opt/program/serve
 WORKDIR /opt/program
