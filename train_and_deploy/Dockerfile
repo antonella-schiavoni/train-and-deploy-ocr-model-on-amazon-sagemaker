@@ -27,6 +27,7 @@ RUN pip3 install networkx==2.3 flask gevent gunicorn boto3 paddleocr==2.6.0
 
 #RUN pip3 install paddlepaddle-gpu==2.0rc1 -i https://opentuna.cn/pypi/web/simple
 RUN pip3 install paddlepaddle-gpu -i https://mirror.baidu.com/pypi/simple
+RUN pip3 install paddlenlp
 
 #add folder
 #RUN git clone https://github.com/jackie930/PaddleOCR.git /opt/program/
