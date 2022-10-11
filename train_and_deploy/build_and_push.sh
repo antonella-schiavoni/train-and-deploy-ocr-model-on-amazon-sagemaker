@@ -27,8 +27,9 @@ fi
 #if you only want to specify one region, use region, otherwise, use regions
 region="eu-west-1"
 
-image_name="$(date '+%Y%m%d_%H%M%S')"
-fullname="${account}.dkr.ecr.${region}.amazonaws.com/paddle:${image_name}"
+git_hash="$(git rev-parse HEAD)"
+image_name="$(date '+%Y%m%d_%H%M')"
+fullname="${account}.dkr.ecr.${region}.amazonaws.com/paddle:${image_name}_${git_hash}"
 registry_id="239350501239"
 registry_uri="${registry_id}.dkr.ecr.${region}.amazonaws.com"
 
