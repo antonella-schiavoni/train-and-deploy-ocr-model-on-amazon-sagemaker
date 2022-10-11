@@ -32,10 +32,6 @@ fullname="${account}.dkr.ecr.${region}.amazonaws.com/paddle:${image_name}"
 registry_id="239350501239"
 registry_uri="${registry_id}.dkr.ecr.${region}.amazonaws.com"
 
-echo ${fullname}
-echo ${registry_uri}
-echo ${region}
-
 # Get the login command from ECR and execute it directly
 
 
@@ -54,3 +50,8 @@ docker build -t ${image} -f Dockerfile . --build-arg REGISTRY_URI=${registry_uri
 #docker build -t ${image} -f Dockerfile .
 docker tag ${image} ${fullname}
 docker push ${fullname}
+
+echo ${fullname}
+echo ${registry_uri}
+echo ${region}
+echo ${image}
