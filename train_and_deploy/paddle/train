@@ -227,8 +227,11 @@ def train():
         #export model for inference
         save_path = os.path.join(model_path, "inference")
         arch_config = config["Architecture"]
-        export_single_model(model, arch_config, save_path, logger)
-        print('convert model complete.')
+        print('Saving Model')
+        #export_single_model(model, arch_config, save_path, logger)
+        paddle.jit.save(model, save_path)
+        logger.info("inference model is saved to {}".format(save_path))
+
 
     except Exception as e:
         # Write out an error file. This will be returned as the failureReason in the
