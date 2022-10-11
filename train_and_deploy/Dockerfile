@@ -31,7 +31,7 @@ RUN pip3 install paddlenlp
 
 #add folder
 #RUN git clone https://github.com/jackie930/PaddleOCR.git /opt/program/
-RUN git clone -b release/2.1 https://github.com/PaddlePaddle/PaddleOCR.git /opt/program/
+COPY PaddleOCR/ /opt/program/
 
 #download pretrained model for finetunine
 RUN mkdir /opt/program/pretrain/
