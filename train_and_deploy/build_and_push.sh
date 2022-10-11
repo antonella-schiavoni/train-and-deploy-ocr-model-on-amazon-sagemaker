@@ -27,8 +27,8 @@ fi
 #if you only want to specify one region, use region, otherwise, use regions
 region="eu-west-1"
 
-
-fullname="${account}.dkr.ecr.${region}.amazonaws.com/${image}:latest"
+image_name="$(date '+%Y%m%d_%H%M%S')"
+fullname="${account}.dkr.ecr.${region}.amazonaws.com/paddle:${image_name}"
 registry_id="239350501239"
 registry_uri="${registry_id}.dkr.ecr.${region}.amazonaws.com"
 
