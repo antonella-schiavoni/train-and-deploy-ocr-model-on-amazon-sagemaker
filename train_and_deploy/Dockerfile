@@ -1,5 +1,7 @@
 #FROM paddlepaddle/paddle:2.0.0rc1-gpu-cuda10.1-cudnn7#
-FROM registry.baidubce.com/paddlepaddle/paddle:2.2.2-gpu-cuda10.2-cudnn7
+#FROM registry.baidubce.com/paddlepaddle/paddle:2.2.2-gpu-cuda10.2-cudnn7
+#FROM paddlepaddle/paddle:2.3.1-gpu-cuda10.2-cudnn7
+FROM paddlepaddle/paddle:2.3.2-gpu-cuda10.2-cudnn7
 #ARG REGISTRY_URI
 #FROM ${REGISTRY_URI}/pytorch-training:1.3.1-cpu-py36-ubuntu16.04
 #FROM ${REGISTRY_URI}/pytorch-training:1.5.1-gpu-py36-cu101-ubuntu16.04
