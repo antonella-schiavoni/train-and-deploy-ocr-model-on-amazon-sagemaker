@@ -32,6 +32,7 @@ from ppocr.optimizer import build_optimizer
 from ppocr.postprocess import build_post_process
 from ppocr.metrics import build_metric
 from ppocr.utils.save_load import load_model
+from ppocr.utils.save_load import save_model
 import tools.program as program
 from tools.program import merge_config, load_config
 from tools.infer.utility import check_gpu
@@ -45,7 +46,7 @@ input_path = prefix + 'input/data'
 output_path = os.path.join(prefix, 'output')
 model_path = os.path.join(prefix, 'model')
 param_path = os.path.join(prefix, 'input/config/hyperparameters.json')
-config_path = 'opt/ml/input/data/config/ser_vi_layoutxlm_tickets.yml'
+config_path = '/opt/ml/input/data/config/ser_vi_layoutxlm_tickets.yml'
 
 # This algorithm has a single channel of input data called 'training'. Since we run in
 # File mode, the input files are copied to the directory specified here.
@@ -228,8 +229,9 @@ def train():
         save_path = os.path.join(model_path, "inference")
         arch_config = config["Architecture"]
         print('Saving Model')
-        #export_single_model(model, arch_config, save_path, logger)
-        paddle.jit.save(model, save_path)
+        save_model(model, optimizer, model_path, logger, config, is_best=False,
+                   prefix='ppocr')
+
         logger.info("inference model is saved to {}".format(save_path))
 
 
