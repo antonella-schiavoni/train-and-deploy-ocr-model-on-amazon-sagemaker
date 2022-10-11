@@ -36,7 +36,7 @@ COPY PaddleOCR/ /opt/program/
 #download pretrained model for finetunine
 RUN mkdir /opt/program/pretrain/
 RUN cd /opt/program/pretrain/
-RUN wget -P /opt/program/pretrain/ https://paddleocr.bj.bcebos.com/dygraph_v2.0/ch/ch_ppocr_mobile_v2.0_rec_train.tar && tar -xf /opt/program/pretrain/ch_ppocr_mobile_v2.0_rec_train.tar -C /opt/program/pretrain/ && rm -rf /opt/program/pretrain/ch_ppocr_mobile_v2.0_rec_train.tar
+RUN wget -P /opt/program/pretrain/ https://paddleocr.bj.bcebos.com/ppstructure/models/vi_layoutxlm/ser_vi_layoutxlm_xfund_pretrained.tar && tar -xf /opt/program/pretrain/ser_vi_layoutxlm_xfund_pretrained.tar -C /opt/program/pretrain/ && rm -rf /opt/program/pretrain/ser_vi_layoutxlm_xfund_pretrained.tar
 
 #download model for inference
 RUN mkdir /opt/program/inference/
