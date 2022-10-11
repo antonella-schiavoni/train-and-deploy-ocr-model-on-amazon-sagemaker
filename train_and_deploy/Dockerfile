@@ -23,7 +23,7 @@ RUN pip3 install --upgrade pip
 ## install flask
 #RUN pip3 install networkx==2.3 flask gevent gunicorn boto3 paddleocr>=2.0.1
 #todo: need to test the paddleocr version
-RUN pip3 install networkx==2.3 flask gevent gunicorn boto3 paddleocr==2.0.1
+RUN pip3 install networkx==2.3 flask gevent gunicorn boto3 paddleocr==2.6.0
 
 #RUN pip3 install paddlepaddle-gpu==2.0rc1 -i https://opentuna.cn/pypi/web/simple
 RUN pip3 install paddlepaddle-gpu -i https://mirror.baidu.com/pypi/simple
