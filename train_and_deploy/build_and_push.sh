@@ -46,8 +46,7 @@ aws ecr describe-repositories --repository-names "${image}" --region ${region}
 
 
 # Build the docker image, tag with full name and then push it to ECR
-docker build -t ${image} -f Dockerfile . --build-arg REGISTRY_URI=${registry_uri}
-#docker build -t ${image} -f Dockerfile .
+docker build -t ${image} -f train-and-deploy-ocr-model-on-amazon-sagemaker/train_and_deploy/Dockerfile . --build-arg REGISTRY_URI=${registry_uri}
 docker tag ${image} ${fullname}
 docker push ${fullname}
 
