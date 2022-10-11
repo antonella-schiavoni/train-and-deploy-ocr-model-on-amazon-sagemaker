@@ -33,17 +33,7 @@ registry_id="239350501239"
 registry_uri="${registry_id}.dkr.ecr.${region}.amazonaws.com"
 
 # Get the login command from ECR and execute it directly
-
-
 aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${account}.dkr.ecr.${region}.amazonaws.com
-
-#aws ecr get-login-password --region ${region} --registry-ids 239350501239 | docker login --username AWS --password-stdin ${account}.dkr.ecr.${region}.amazonaws.com
-
-# If the repository doesn't exist in ECR, create it.
-aws ecr describe-repositories --repository-names "${image}" --region ${region}
-
-#|| aws ecr create-repository --repository-name "${image}" --region ${region}
-
 
 # Build the docker image, tag with full name and then push it to ECR
 docker build -t ${image} -f train-and-deploy-ocr-model-on-amazon-sagemaker/train_and_deploy/Dockerfile . --build-arg REGISTRY_URI=${registry_uri}
