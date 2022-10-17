@@ -33,24 +33,23 @@ s3_client = boto3.client('s3')
 
 #check and init models
 # make sure the model parameters exist
-for i in ['/opt/program/inference/ch_ppocr_server_v2.0_det_infer',
-          '/opt/ml/model',
-          '/opt/program/inference/ch_ppocr_mobile_v2.0_cls_infer']:
-    if os.path.exists(i):
-        print("<<<<pretrained model exists for :", i)
+for model_path in ['/opt/ml/model', '/opt/program/inference/ser_vi_layoutxlm_xfund_zh']:
+    if os.path.exists(model_path):
+        print("<<<<pretrained model exists for :", model_path)
     else:
-        print("<<< make sure the model parameters exist for: ", i)
+        print("<<< make sure the model parameters exist for: ", model_path)
         break
 
 # list the files under opt/ml/model
-print ("<<< files under opt/ml/model", os.listdir('/opt/ml/model/'))
-print ("start!!!!")
-ocr = PaddleOCR(det_model_dir='/opt/program/inference/ch_ppocr_server_v2.0_det_infer',
+print("<<< files under opt/ml/model", os.listdir('/opt/ml/model/'))
+print("start!!!!")
+ocr = PaddleOCR(det_model_dir='/opt/program/inference/ser_vi_layoutxlm_xfund_infer',
                 rec_model_dir='/opt/ml/model',
                 rec_char_dict_path='/opt/program/ppocr_keys_v1.txt',
-                cls_model_dir='/opt/program/inference/ch_ppocr_mobile_v2.0_cls_infer',
+                cls_model_dir='/opt/program/inference/ser_vi_layoutxlm_xfund_infer',
                 use_pdserving=False)  # need to run only once to download and load model into memory
-print ("test!!!!")
+
+print("test!!!!")
 
 class MyEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -84,15 +83,15 @@ def bbox_main(type, imgpath, detect='paddle'):
         if type == 'img_path':
             img = cv2.imread(imgpath)
             img_shape = img.shape
-            print ("<<< img shape: ", img_shape)
+            print("<<< img shape: ", img_shape)
             result = ocr.ocr(imgpath, rec=True)
             print(result)
 
         elif type == 'img':
             img_shape = imgpath.shape
-            print ("<<< img shape: ", img_shape)
+            print("<<< img shape: ", img_shape)
             result = ocr.ocr(imgpath, rec=True)
-            print (result)
+            print(result)
 
         # save results
         res2 = {}
@@ -135,7 +134,7 @@ def invocations():
     print("================ INVOCATIONS =================")
 
     #parse json in request
-    print ("<<<< flask.request.content_type", flask.request.content_type)
+    print("<<<< flask.request.content_type", flask.request.content_type)
     if flask.request.content_type == 'application/json':
         data = flask.request.data.decode('utf-8')
         data = json.loads(data)
@@ -144,13 +143,12 @@ def invocations():
         image_uri = data['image_uri']
 
         download_file_name = image_uri.split('/')[-1]
-        print ("<<<<download_file_name ", download_file_name)
+        print("<<<<download_file_name ", download_file_name)
         s3_client.download_file(bucket, image_uri, download_file_name)
 
         print('Download finished!')
 
         print('Start to inference:')
-
         # LOAD MODEL
         label = ''
         try:
@@ -158,7 +156,7 @@ def invocations():
         except Exception as exception:
             print(exception)
 
-        print ("Done inference! ")
+        print("Done inference! ")
         inference_result = {
             'label': res['label'],
             'confidences': res['confidence'],
