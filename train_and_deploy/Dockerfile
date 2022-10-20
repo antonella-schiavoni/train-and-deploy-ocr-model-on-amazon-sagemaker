@@ -15,7 +15,7 @@ RUN pip3 install paddlepaddle-gpu -i https://mirror.baidu.com/pypi/simple
 RUN pip3 install paddlenlp
 
 # Add folder
-COPY PaddleOCROriginal/ /opt/program/
+COPY PaddleOCROriginal/PaddleOCR/ /opt/program/
 
 # Download pretrained model for finetunine
 RUN mkdir /opt/program/pretrain/
